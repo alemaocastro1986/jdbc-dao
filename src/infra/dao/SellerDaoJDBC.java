@@ -51,19 +51,9 @@ public class SellerDaoJDBC implements ISellerDao {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                Department dep = new Department();
-                dep.setId(rs.getInt("DepartmentId"));
-                dep.setName(rs.getString("DepName"));
+                Department dep = departmentMapper(rs);
 
-                Seller seller = new Seller();
-                seller.setId(rs.getInt("Id"));
-                seller.setName(rs.getString("Name"));
-                seller.setEmail(rs.getString("Email"));
-                seller.setBaseSalary(rs.getDouble("BaseSalary"));
-                seller.setBirthDate(rs.getDate("BirthDate"));
-                seller.setDepartment(dep);
-
-                return seller;
+                return sellerMapper(rs, dep);
             }
         } catch (SQLException ex) {
             throw new DbException(ex.getMessage());
@@ -73,6 +63,24 @@ public class SellerDaoJDBC implements ISellerDao {
         }
 
         return null;
+    }
+
+    private Seller sellerMapper(ResultSet rs, Department dep) throws SQLException {
+        Seller obj = new Seller();
+        obj.setId(rs.getInt("Id"));
+        obj.setName(rs.getString("Name"));
+        obj.setEmail(rs.getString("Email"));
+        obj.setBaseSalary(rs.getDouble("BaseSalary"));
+        obj.setBirthDate(rs.getDate("BirthDate"));
+        obj.setDepartment(dep);
+        return  obj;
+    }
+
+    private Department departmentMapper(ResultSet rs) throws SQLException {
+        Department dep = new Department();
+        dep.setId(rs.getInt("DepartmentId"));
+        dep.setName(rs.getString("DepName"));
+        return dep;
     }
 
     @Override
