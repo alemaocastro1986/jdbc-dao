@@ -2,10 +2,7 @@ package infra.database;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 
 public class DbContext {
@@ -49,6 +46,16 @@ public class DbContext {
         if (statement != null) {
             try {
                 statement.close();
+            } catch (SQLException ex) {
+                throw new DbException(ex.getMessage());
+            }
+        }
+    }
+
+    public static void closeResultSet(ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
             } catch (SQLException ex) {
                 throw new DbException(ex.getMessage());
             }
