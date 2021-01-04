@@ -10,7 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SellerDaoJDBC implements ISellerDao {
 
@@ -57,7 +60,7 @@ public class SellerDaoJDBC implements ISellerDao {
             }
         } catch (SQLException ex) {
             throw new DbException(ex.getMessage());
-        }finally {
+        } finally {
             DbContext.closeResultSet(rs);
             DbContext.closeStatement(ps);
         }
@@ -73,7 +76,7 @@ public class SellerDaoJDBC implements ISellerDao {
         obj.setBaseSalary(rs.getDouble("BaseSalary"));
         obj.setBirthDate(rs.getDate("BirthDate"));
         obj.setDepartment(dep);
-        return  obj;
+        return obj;
     }
 
     private Department departmentMapper(ResultSet rs) throws SQLException {
@@ -86,5 +89,47 @@ public class SellerDaoJDBC implements ISellerDao {
     @Override
     public List<Seller> findAll() {
         return null;
+    }
+
+    @Override
+    public List<Seller> findByDepartment(Department department) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(
+                    "SELECT s.*, d.Name as DepName " +
+                            "FROM seller AS s INNER JOIN department as d  " +
+                            "ON s.DepartmentId = d.Id " +
+                            "WHERE d.Id = ? " +
+                            "ORDER BY s.Name;"
+            );
+            ps.setInt(1, department.getId());
+            rs = ps.executeQuery();
+
+            List<Seller> sellers = new ArrayList<>();
+            Map<Integer, Department> departmentMap = new HashMap<>();
+
+            while (rs.next()) {
+                Department dep = departmentMap.get(rs.getInt("DepartmentId"));
+
+                if (dep == null) {
+                    dep = departmentMapper(rs);
+                    departmentMap.put(rs.getInt("DepartmentId"), dep);
+                }
+
+                Seller obj = sellerMapper(rs, dep);
+                sellers.add(obj);
+
+            }
+
+            return sellers;
+        } catch (SQLException ex) {
+            throw new DbException(ex.getMessage());
+        } finally {
+            DbContext.closeResultSet(rs);
+            DbContext.closeStatement(ps);
+        }
+
     }
 }
