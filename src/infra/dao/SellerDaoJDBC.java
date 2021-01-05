@@ -41,15 +41,15 @@ public class SellerDaoJDBC implements ISellerDao {
 
             int rows = ps.executeUpdate();
 
-            if(rows > 0){
+            if (rows > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
-                if(rs.next()){
+                if (rs.next()) {
                     int id = rs.getInt(1);
                     seller.setId(id);
                 }
                 DbContext.closeResultSet(rs);
 
-            }else{
+            } else {
                 throw new DbException("Unexpected error, no rows were affected.");
             }
         } catch (SQLException ex) {
@@ -62,7 +62,34 @@ public class SellerDaoJDBC implements ISellerDao {
 
     @Override
     public void update(Seller seller) {
+        PreparedStatement ps = null;
 
+        try {
+            ps = conn.prepareStatement(
+                    "UPDATE seller " +
+                            "SET Name=?, Email=?, BirthDate=?, BaseSalary=?, DepartmentId=? " +
+                            "WHERE Id=?; ",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            ps.setString(1, seller.getName());
+            ps.setString(2, seller.getEmail());
+            ps.setDate(3, new Date(seller.getBirthDate().getTime()));
+            ps.setDouble(4, seller.getBaseSalary());
+            ps.setInt(5, seller.getDepartment().getId());
+
+            // Where
+            ps.setInt(6, seller.getId());
+
+
+            ps.executeUpdate();
+
+
+        } catch (SQLException ex) {
+            throw new DbException(ex.getMessage());
+        } finally {
+            DbContext.closeStatement(ps);
+        }
     }
 
     @Override

@@ -42,6 +42,12 @@ public class Program {
         sellerDao.store(newSeller);
         System.out.println("Inserted new Id =" + newSeller.getId());
 
+        System.out.println("=".repeat(5) + " Test 5 - Seller Update " + "=".repeat(5));
+        seller = sellerDao.findById(9);
+        seller.setName("John doe doe");
+        sellerDao.update(seller);
+        System.out.println("Updated completed");
+
 
     }
 }
