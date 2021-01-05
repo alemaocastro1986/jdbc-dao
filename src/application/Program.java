@@ -48,6 +48,12 @@ public class Program {
         sellerDao.update(seller);
         System.out.println("Updated completed");
 
+        System.out.println("=".repeat(5) + " Test 6 - Seller Update " + "=".repeat(5));
+        seller = sellerDao.findById(10);
+
+        sellerDao.deleteById(seller.getId());
+        System.out.println("Deleted completed");
+
 
     }
 }
