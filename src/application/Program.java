@@ -1,38 +1,44 @@
 package application;
 
+import core.dao.IDepartamentDao;
 import core.dao.ISellerDao;
 import core.entities.Department;
 import core.entities.Seller;
 import infra.dao.DaoFactory;
+import utils.TestConsole;
 
 import java.util.Date;
 import java.util.List;
 
 public class Program {
+
+
     public static void main(String[] args) {
         ISellerDao sellerDao = DaoFactory.createSellerDao();
 
-        System.out.println("=".repeat(5) + " Test 1 - Seller find byId " + "=".repeat(5));
+        TestConsole.describe(" Test Seller Methods ");
+
+        TestConsole.it("Should return a seller by id");
         Seller seller = sellerDao.findById(1);
 
-        System.out.println(seller);
+        TestConsole.printResult(seller.toString());
 
-        System.out.println("=".repeat(5) + " Test 2 - Seller find byDepartment " + "=".repeat(5));
+        TestConsole.it("Should return a seller by department id to equal 2");
         Department department = new Department(2, null);
         List<Seller> sellers = sellerDao.findByDepartment(department);
 
         for (Seller obj : sellers) {
-            System.out.println(obj);
+            TestConsole.printResult(obj.toString());
         }
 
-        System.out.println("=".repeat(5) + " Test 3 - Seller find All " + "=".repeat(5));
+        TestConsole.it("Should return all sellers");
         sellers = sellerDao.findAll();
 
         for (Seller obj : sellers) {
-            System.out.println(obj);
+            TestConsole.printResult(obj.toString());
         }
 
-        System.out.println("=".repeat(5) + " Test 4 - Seller Create " + "=".repeat(5));
+        TestConsole.it("Should create a new Seller.");
         Seller newSeller = new Seller(null,
                 "John Doe",
                 "john-doe@gmail.com",
@@ -40,20 +46,51 @@ public class Program {
                 3000.00,
                 department);
         sellerDao.store(newSeller);
-        System.out.println("Inserted new Id =" + newSeller.getId());
+        TestConsole.printResult("Inserted new Id =" + newSeller.getId());
 
-        System.out.println("=".repeat(5) + " Test 5 - Seller Update " + "=".repeat(5));
+        TestConsole.it("Should update a seller");
         seller = sellerDao.findById(9);
         seller.setName("John doe doe");
         sellerDao.update(seller);
-        System.out.println("Updated completed");
+        TestConsole.printResult("Updated completed");
 
-        System.out.println("=".repeat(5) + " Test 6 - Seller Update " + "=".repeat(5));
-        seller = sellerDao.findById(10);
+        TestConsole.it("Should remove a seller by id.");
+        seller = sellerDao.findById(13);
 
-        sellerDao.deleteById(seller.getId());
-        System.out.println("Deleted completed");
+        sellerDao.deleteById(newSeller.getId());
+        TestConsole.printResult("Deleted completed");
 
+
+        TestConsole.describe(" Test Department Methods ");
+
+        IDepartamentDao departamentDao = DaoFactory.createDepartmentDao();
+
+        TestConsole.it("should update a department");
+        Department dep = new Department(null, "Logistics");
+        departamentDao.store(dep);
+        TestConsole.printResult(dep.toString());
+
+        TestConsole.it("should update a department");
+        dep.setName("Logistic");
+        departamentDao.update(dep);
+        TestConsole.printResult(dep.toString());
+
+        TestConsole.it("should remove a department by id");
+        int id = dep.getId();
+        departamentDao.deleteById(id);
+        TestConsole.printResult("Deleted by id: " + id);
+
+        TestConsole.it("should return a department by id");
+        dep = departamentDao.findById(2);
+        TestConsole.printResult(dep.toString());
+
+
+        TestConsole.it("Should return list of Departments:");
+        List<Department> departments = departamentDao.findAll();
+
+        for (Department depart : departments) {
+            TestConsole.printResult(depart.toString());
+        }
 
     }
 }
