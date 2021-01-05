@@ -5,6 +5,7 @@ import core.entities.Department;
 import core.entities.Seller;
 import infra.dao.DaoFactory;
 
+import java.util.Date;
 import java.util.List;
 
 public class Program {
@@ -30,6 +31,16 @@ public class Program {
         for (Seller obj : sellers) {
             System.out.println(obj);
         }
+
+        System.out.println("=".repeat(5) + " Test 4 - Seller Create " + "=".repeat(5));
+        Seller newSeller = new Seller(null,
+                "John Doe",
+                "john-doe@gmail.com",
+                new Date(),
+                3000.00,
+                department);
+        sellerDao.store(newSeller);
+        System.out.println("Inserted new Id =" + newSeller.getId());
 
 
     }
