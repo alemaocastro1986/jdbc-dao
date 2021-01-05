@@ -6,12 +6,12 @@ import infra.database.DbContext;
 
 public class DaoFactory {
 
-    public static ISellerDao createSellerDao(){
+    public static ISellerDao createSellerDao() {
         return new SellerDaoJDBC(DbContext.getConnection());
     }
 
-    public static IDepartamentDao createDepartmentDao(){
-        return new DepartmentDaoJDBC();
+    public static IDepartamentDao createDepartmentDao() {
+        return new DepartmentDaoJDBC(DbContext.getConnection());
     }
 
 }
