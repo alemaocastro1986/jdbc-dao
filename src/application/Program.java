@@ -24,5 +24,13 @@ public class Program {
             System.out.println(obj);
         }
 
+        System.out.println("=".repeat(5) + " Test 3 - Seller find All " + "=".repeat(5));
+        sellers = sellerDao.findAll();
+
+        for (Seller obj : sellers) {
+            System.out.println(obj);
+        }
+
+
     }
 }
